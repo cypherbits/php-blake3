@@ -12,7 +12,7 @@
 #define PHP_BLAKE2_NAME "BLAKE2"
 #define PHP_BLAKE2_VERSION "0.1.0"
 
-zend_function_entry blake2_functions[] = {
+zend_function_entry blake3_functions[] = {
     PHP_FE(blake3, NULL)
     PHP_FALIAS(blake3b, blake3, NULL)
     PHP_FE(blake3_file, NULL)
@@ -25,7 +25,7 @@ zend_module_entry blake2_module_entry = {
     STANDARD_MODULE_HEADER,
 #endif
     PHP_BLAKE2_NAME,
-    blake2_functions,
+    blake3_functions,
     NULL,
     NULL,
     NULL,
@@ -64,15 +64,15 @@ PHP_FUNCTION(blake3)
 
     if (hashByteLength < 1) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE2 output length is too short");
+        zend_error(E_WARNING, "BLAKE3 output length is too short");
     } else if (hashByteLength > BLAKE3_OUT_LEN) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE2 output length is too long");
+        zend_error(E_WARNING, "BLAKE3 output length is too long");
     }
 
     if (keyLength > BLAKE3_KEY_LEN) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE2 key length is too long");
+        zend_error(E_WARNING, "BLAKE3 key length is too long");
     }
 
     if (hasError) {
@@ -84,7 +84,7 @@ PHP_FUNCTION(blake3)
     int result = blake3(hashOutput, hashByteLength, data, dataByteLength, key, keyLength);
 
     if (result != 0) {
-        zend_error(E_WARNING, "Error generating BLAKE2 hash");
+        zend_error(E_WARNING, "Error generating BLAKE3 hash");
         RETURN_FALSE;
     }
 
