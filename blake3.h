@@ -51,6 +51,10 @@ void blake3_hasher_finalize(const blake3_hasher *self, uint8_t *out,
 void blake3_hasher_finalize_seek(const blake3_hasher *self, uint64_t seek,
                                  uint8_t *out, size_t out_len);
 
+
+/* This is simply an alias for blake2b */
+int blake3( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen );
+
 #ifdef __cplusplus
 }
 #endif

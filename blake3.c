@@ -5,6 +5,41 @@
 #include "blake3.h"
 #include "blake3_impl.h"
 
+
+/* inlen, at least, should be uint64_t. Others can be size_t. */
+int blake3( void *out, size_t outlen, const void *in, size_t inlen, const void *key, size_t keylen )
+{
+    // Initialize the hasher.
+    blake3_hasher hasher;
+
+
+    /* Verify parameters */
+    if ( NULL == in && inlen > 0 ) return -1;
+
+    if ( NULL == out ) return -1;
+
+    if( NULL == key && keylen > 0 ) return -1;
+
+    if( !outlen || outlen > BLAKE3_OUT_LEN ) return -1;
+
+    if( keylen > BLAKE3_KEY_LEN ) return -1;
+
+    if( keylen > 0 )
+    {
+        blake3_hasher_init_keyed(&hasher, key);
+    }
+    else
+    {
+        blake3_hasher_init(&hasher);
+    }
+
+    blake3_hasher_update(&hasher, in, inlen);
+
+    blake3_hasher_finalize(&hasher, out, outlen);
+
+    return 0;
+}
+
 INLINE void chunk_state_init(blake3_chunk_state *self, const uint32_t key[8],
                              uint8_t flags) {
   memcpy(self->cv, key, BLAKE3_KEY_LEN);
