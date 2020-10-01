@@ -1,3 +1,6 @@
+CFLAGS = -g -O2 -mavx -mavx2 -mssse3 -mavx512f -msse4.1 -msse -mpclmul -mavx512dq -mavx512vl
+
+
 Copyright (c) 2012-present strawbrary
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

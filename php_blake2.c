@@ -5,7 +5,8 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "ext/hash/php_hash.h"
-#include "blake2.h"
+//#include "blake2.h"
+#include "blake3.h"
 #include "php_blake2.h"
 
 #define PHP_BLAKE2_NAME "BLAKE2"
@@ -44,11 +45,11 @@ ZEND_GET_MODULE(blake2)
 PHP_FUNCTION(blake2)
 {
 #if ZEND_MODULE_API_NO >= 20151012
-    zend_long hashByteLength = BLAKE2B_OUTBYTES;
+    zend_long hashByteLength = BLAKE3_OUT_LEN;
     size_t dataByteLength;
     size_t keyLength = 0;
 #else
-    long hashByteLength = BLAKE2B_OUTBYTES;
+    long hashByteLength = BLAKE3_OUT_LEN;
     int dataByteLength;
     int keyLength = 0;
 #endif
@@ -65,12 +66,12 @@ PHP_FUNCTION(blake2)
     if (hashByteLength < 1) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2 output length is too short");
-    } else if (hashByteLength > BLAKE2B_OUTBYTES) {
+    } else if (hashByteLength > BLAKE3_OUT_LEN) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2 output length is too long");
     }
 
-    if (keyLength > BLAKE2B_KEYBYTES) {
+    if (keyLength > BLAKE3_KEY_LEN) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2 key length is too long");
     }
@@ -81,7 +82,7 @@ PHP_FUNCTION(blake2)
 
     char* hashOutput = (char*) emalloc(hashByteLength);
 
-    int result = blake2b(hashOutput, hashByteLength, data, dataByteLength, key, keyLength);
+    int result = blake3(hashOutput, hashByteLength, data, dataByteLength, key, keyLength);
 
     if (result != 0) {
         zend_error(E_WARNING, "Error generating BLAKE2 hash");
@@ -114,11 +115,11 @@ PHP_FUNCTION(blake2)
 PHP_FUNCTION(blake2s)
 {
 #if ZEND_MODULE_API_NO >= 20151012
-    zend_long hashByteLength = BLAKE2S_OUTBYTES;
+    zend_long hashByteLength = BLAKE3_OUT_LEN;
     size_t dataByteLength;
     size_t keyLength = 0;
 #else
-    long hashByteLength = BLAKE2S_OUTBYTES;
+    long hashByteLength = BLAKE3_OUT_LEN;
     int dataByteLength;
     int keyLength = 0;
 #endif
@@ -135,12 +136,12 @@ PHP_FUNCTION(blake2s)
     if (hashByteLength < 1) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2s output length is too short");
-    } else if (hashByteLength > BLAKE2S_OUTBYTES) {
+    } else if (hashByteLength > BLAKE3_OUT_LEN) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2s output length is too long");
     }
 
-    if (keyLength > BLAKE2S_KEYBYTES) {
+    if (keyLength > BLAKE3_KEY_LEN) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE2s key length is too long");
     }
@@ -184,10 +185,10 @@ PHP_FUNCTION(blake2s)
 PHP_FUNCTION(blake2_file)
 {
 #if ZEND_MODULE_API_NO >= 20151012
-    zend_long hashByteLength = BLAKE2B_OUTBYTES;
+    zend_long hashByteLength = BLAKE3_OUT_LEN;
     size_t dataByteLength;
 #else
-    long hashByteLength = BLAKE2B_OUTBYTES;
+    long hashByteLength = BLAKE3_OUT_LEN;
     int dataByteLength;
 #endif
 
@@ -198,7 +199,7 @@ PHP_FUNCTION(blake2_file)
     int           n;
     unsigned char buf[1024];
 
-    blake2b_state S[1];
+    blake3_chunk_state S[1];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "p|b", &data, &dataByteLength, &rawOutput) == FAILURE) {
         return;
