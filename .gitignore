@@ -29,3 +29,6 @@ modules/
 include/
 php_blake2.lo
 run-tests.php
+*.lo
+.idea/
+configure.ac
