@@ -5,7 +5,6 @@
 #include "php.h"
 #include "ext/standard/info.h"
 #include "ext/hash/php_hash.h"
-//#include "blake2.h"
 #include "blake3.h"
 #include "php_blake2.h"
 
@@ -109,6 +108,8 @@ PHP_FUNCTION(blake3)
     }
 
     efree(hashOutput);
+    efree(data);
+    efree(key);
 }
 
 PHP_FUNCTION(blake3_file)
