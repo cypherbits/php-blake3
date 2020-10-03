@@ -99,20 +99,17 @@ PHP_FUNCTION(blake3)
         php_hash_bin2hex(hex, (unsigned char *) hashOutput, hashByteLength);
         hex[hashByteLength * 2] = '\0';
 
-        //Free memory here since doing it latter is not working for me
-        efree(hashOutput);
-        //Free memory here since doing it latter is not working for me, but we cannot since we wanna return it... but memory is never free making memory full
-        //efree(hex);
-
 #if ZEND_MODULE_API_NO >= 20151012
-        RETURN_STRING(hex);
+        //RETURN_STRING(hex);
+        RETVAL_STRING(hex);
 #else
-        RETURN_STRING(hex, 1);
+        //RETURN_STRING(hex, 1);
+        RETVAL_STRING(hex,1);
 #endif
-        //Do we need this here? Not working for me.
+
         efree(hex);
     }
-    //Do we need this here? Not working for me.
+
     efree(hashOutput);
 }
 
