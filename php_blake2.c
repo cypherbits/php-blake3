@@ -90,9 +90,9 @@ PHP_FUNCTION(blake3)
 
     if (rawOutput) {
 #if ZEND_MODULE_API_NO >= 20151012
-        RETURN_STRINGL(hashOutput, hashByteLength);
+         RETVAL_STRINGL(hashOutput, hashByteLength);
 #else
-        RETURN_STRINGL(hashOutput, hashByteLength, 1);
+         RETVAL_STRINGL(hashOutput, hashByteLength, 1);
 #endif
     } else {
         char* hex = (char*) emalloc(hashByteLength * 2 + 1);
@@ -100,10 +100,8 @@ PHP_FUNCTION(blake3)
         hex[hashByteLength * 2] = '\0';
 
 #if ZEND_MODULE_API_NO >= 20151012
-        //RETURN_STRING(hex);
         RETVAL_STRING(hex);
 #else
-        //RETURN_STRING(hex, 1);
         RETVAL_STRING(hex,1);
 #endif
 
@@ -130,7 +128,7 @@ PHP_FUNCTION(blake3_file)
     int           n;
     unsigned char buf[1024];
 
-    blake3_chunk_state S[1];
+    blake3_hasher hasher;
 
     if (zend_parse_parameters(ZEND_NUM_ARGS(), "p|b", &data, &dataByteLength, &rawOutput) == FAILURE) {
         return;
@@ -143,34 +141,36 @@ PHP_FUNCTION(blake3_file)
 
     char* hashOutput = (char*) emalloc(hashByteLength);
 
-    blake2b_init(S, hashByteLength);
+    blake3_hasher_init(&hasher);
 
     while ((n = php_stream_read(stream, buf, sizeof(buf))) > 0) {
-        blake2b_update(S, (const uint8_t *)buf, n);
+       // blake2b_update(S, (const uint8_t *)buf, n);
+        blake3_hasher_update(&hasher, (const uint8_t *)buf, n);
     }
 
-    blake2b_final(S, hashOutput, hashByteLength);
+    blake3_hasher_finalize(&hasher, hashOutput, hashByteLength);
 
     php_stream_close(stream);
 
     if (n<0) {
+        efree(hashOutput);
         RETURN_FALSE;
     }
 
     if (rawOutput) {
 #if ZEND_MODULE_API_NO >= 20151012
-        RETURN_STRINGL(hashOutput, hashByteLength);
+        RETVAL_STRINGL(hashOutput, hashByteLength);
 #else
-        RETURN_STRINGL(hashOutput, hashByteLength, 1);
+        RETVAL_STRINGL(hashOutput, hashByteLength, 1);
 #endif
     } else {
         char* hex = (char*) emalloc(hashByteLength * 2 + 1);
         php_hash_bin2hex(hex, (unsigned char *) hashOutput, hashByteLength);
         hex[hashByteLength * 2] = '\0';
 #if ZEND_MODULE_API_NO >= 20151012
-        RETURN_STRING(hex);
+        RETVAL_STRING(hex);
 #else
-        RETURN_STRING(hex, 1);
+        RETVAL_STRING(hex,1);
 #endif
         efree(hex);
     }

@@ -32,12 +32,6 @@ int blake3( void *out, size_t outlen, const void *in, size_t inlen, const void *
         blake3_hasher_init(&hasher);
     }
 
-    // Read input bytes
-   /* unsigned char buf[65536];
-    ssize_t n;
-    while ((n = fread(in, buf, sizeof(buf))) > 0) {
-        blake3_hasher_update(&hasher, buf, n);
-    }*/
     blake3_hasher_update(&hasher, in, inlen);
 
     blake3_hasher_finalize(&hasher, out, outlen);
