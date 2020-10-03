@@ -13,7 +13,6 @@
 
 zend_function_entry blake3_functions[] = {
     PHP_FE(blake3, NULL)
-    PHP_FALIAS(blake3b, blake3, NULL)
     PHP_FE(blake3_file, NULL)
     PHP_FALIAS(b3sum, blake3_file, NULL)
     {NULL, NULL, NULL}
