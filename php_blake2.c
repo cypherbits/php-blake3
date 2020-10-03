@@ -78,12 +78,13 @@ PHP_FUNCTION(blake3)
         RETURN_FALSE;
     }
 
-    char* hashOutput = (char*) emalloc(hashByteLength);
+    char* hashOutput = (unsigned char*) emalloc(hashByteLength);
 
     int result = blake3(hashOutput, hashByteLength, data, dataByteLength, key, keyLength);
 
     if (result != 0) {
         zend_error(E_WARNING, "Error generating BLAKE3 hash");
+        efree(hashOutput);
         RETURN_FALSE;
     }
 
@@ -98,18 +99,21 @@ PHP_FUNCTION(blake3)
         php_hash_bin2hex(hex, (unsigned char *) hashOutput, hashByteLength);
         hex[hashByteLength * 2] = '\0';
 
+        //Free memory here since doing it latter is not working for me
+        efree(hashOutput);
+        //Free memory here since doing it latter is not working for me, but we cannot since we wanna return it... but memory is never free making memory full
+        efree(hex);
+
 #if ZEND_MODULE_API_NO >= 20151012
         RETURN_STRING(hex);
 #else
         RETURN_STRING(hex, 1);
 #endif
-
+        //Do we need this here? Not working for me.
         efree(hex);
     }
-
+    //Do we need this here? Not working for me.
     efree(hashOutput);
-    efree(data);
-    efree(key);
 }
 
 PHP_FUNCTION(blake3_file)
