@@ -5,9 +5,9 @@ Verify BLAKE2 error output
 --FILE--
 <?php
 blake2('Hello world', 0);
-blake2('Hello world', 65);
-blake2('Hello world', 64, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-blake2('Hello world', 65, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+blake2('Hello world', 33);
+blake2('Hello world', 32, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+blake2('Hello world', 33, 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 ?>
 --EXPECTF--
 Warning: BLAKE2 output length is too short in %s on line %d

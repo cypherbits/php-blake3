@@ -143,7 +143,6 @@ PHP_FUNCTION(blake3_file)
     blake3_hasher_init(&hasher);
 
     while ((n = php_stream_read(stream, buf, sizeof(buf))) > 0) {
-       // blake2b_update(S, (const uint8_t *)buf, n);
         blake3_hasher_update(&hasher, (const uint8_t *)buf, n);
     }
 
