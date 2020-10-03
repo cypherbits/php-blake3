@@ -1,9 +1,7 @@
-PHP BLAKE2 Extension
+PHP BLAKE3 Extension
 ============================
 
-[![Build Status](https://travis-ci.org/strawbrary/php-blake2.svg?branch=master)](https://travis-ci.org/strawbrary/php-blake2)
-
-BLAKE2 is an improved version of BLAKE, one the finalists in the NIST SHA-3 competition. Like BLAKE or SHA-3, BLAKE2 offers the highest security, yet is fast as MD5 on 64-bit platforms and requires at least 33% less RAM than SHA-2 or SHA-3 on low-end systems. This implementation uses the BLAKE2b variant of the algorithm which is optimized for 64-bit systems. The algorithm was designed by Jean-Philippe Aumasson, Samuel Neves, Zooko Wilcox-O'Hearn, and Christian Winnerlein.
+BLAKE3 is an improved and faster version of BLAKE, one the finalists in the NIST SHA-3 competition. Like BLAKE or SHA-3, BLAKE2 offers the highest security, yet is fast as MD5 on 64-bit platforms and requires at least 33% less RAM than SHA-2 or SHA-3 on low-end systems. This implementation uses the BLAKE2b variant of the algorithm which is optimized for 64-bit systems. The algorithm was designed by Jean-Philippe Aumasson, Samuel Neves, Zooko Wilcox-O'Hearn, and Christian Winnerlein.
 
 Installation
 ------------
@@ -107,4 +105,4 @@ Outputs : a61b779ff667fbcc4775cbb02cd0763b9b5312fe6359a44a003f582ce6897c81a38a87
 
 More Info
 ---------
-https://blake2.net/
+https://github.com/BLAKE3-team/BLAKE3
