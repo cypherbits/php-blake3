@@ -68,9 +68,9 @@ PHP_FUNCTION(blake3)
         zend_error(E_WARNING, "BLAKE3 output length is too long");
     }
 
-    if (keyLength > BLAKE3_KEY_LEN) {
+    if (keyLength > 0 && keyLength != BLAKE3_KEY_LEN) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE3 key length is too long");
+        zend_error(E_WARNING, "BLAKE3 key length MUST be 32 bytes");
     }
 
     if (hasError) {
