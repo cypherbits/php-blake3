@@ -6,10 +6,10 @@
 #include "ext/standard/info.h"
 #include "ext/hash/php_hash.h"
 #include "blake3.h"
-#include "php_blake2.h"
+#include "php_blake3.h"
 
-#define PHP_BLAKE2_NAME "BLAKE2"
-#define PHP_BLAKE2_VERSION "0.1.0"
+#define PHP_BLAKE3_NAME "BLAKE3"
+#define PHP_BLAKE3_VERSION "0.1.0"
 
 zend_function_entry blake3_functions[] = {
     PHP_FE(blake3, NULL)
@@ -18,11 +18,11 @@ zend_function_entry blake3_functions[] = {
     {NULL, NULL, NULL}
 };
 
-zend_module_entry blake2_module_entry = {
+zend_module_entry blake3_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
     STANDARD_MODULE_HEADER,
 #endif
-    PHP_BLAKE2_NAME,
+    PHP_BLAKE3_NAME,
     blake3_functions,
     NULL,
     NULL,
@@ -30,13 +30,13 @@ zend_module_entry blake2_module_entry = {
     NULL,
     NULL,
 #if ZEND_MODULE_API_NO >= 20010901
-    PHP_BLAKE2_VERSION,
+    PHP_BLAKE3_VERSION,
 #endif
     STANDARD_MODULE_PROPERTIES
 };
 
-#ifdef COMPILE_DL_BLAKE2
-ZEND_GET_MODULE(blake2)
+#ifdef COMPILE_DL_BLAKE3
+ZEND_GET_MODULE(blake3)
 #endif
 
 PHP_FUNCTION(blake3)

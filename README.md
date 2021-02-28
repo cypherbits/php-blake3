@@ -12,14 +12,14 @@ Clone the repository and compile it:
 $ git clone https://github.com/cypherbits/php-blake3.git
 $ cd php-blake3
 $ phpize
-$ ./configure --enable-blake2
+$ ./configure --enable-blake3
 $ make && sudo make install
 ```
 
 Enable the extension by adding the following line to your php.ini file:
 
 ```sh
-extension=blake2.so
+extension=blake3.so
 ```
 
 You may need to restart your web server to load the extension.

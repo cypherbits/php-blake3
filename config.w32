@@ -1,8 +1,8 @@
-ARG_ENABLE('blake2', 'blake2 support', 'no');
+ARG_ENABLE('blake3', 'blake3 support', 'no');
 
-if (PHP_BLAKE2 != 'no') {
-	AC_DEFINE('HAVE_BLAKE2', 1, 'blake2 support enabled');
+if (PHP_BLAKE3 != 'no') {
+	AC_DEFINE('HAVE_BLAKE3', 1, 'blake3 support enabled');
 
-	EXTENSION('blake2', 'php_blake2.c', true, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
-	ADD_SOURCES(configure_module_dirname, 'blake2b-ref.c blake2s-ref.c', 'blake2');
+	EXTENSION('blake3', 'php_blake3.c', true, '/DZEND_ENABLE_STATIC_TSRMLS_CACHE=1');
+	ADD_SOURCES(configure_module_dirname, 'blake3b-ref.c blake3s-ref.c', 'blake3');
 }
