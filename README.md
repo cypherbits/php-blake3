@@ -36,7 +36,7 @@ string blake3 ( string $str [, int $outputSize = 64, string $key, bool $rawOutpu
 * $key: Turns the output into a keyed hash using the specified key. It MUST be of 32 bytes long.
 * $rawOutput: If set to true, then the hash is returned in raw binary format
 
-* Return value: A hex string containing the BLAKE3 hash of the input string
+* Return value: A hex string containing the BLAKE3 hash of the input string. Default output size: 32 bytes.
 
 ```php
 string blake3_file ( string $filename [, bool $rawOutput = false ] )

@@ -62,15 +62,15 @@ PHP_FUNCTION(blake3)
 
     if (hashByteLength < 1) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE3 output length is too short");
-    } else if (hashByteLength > BLAKE3_OUT_LEN) {
+        zend_error(E_ERROR, "BLAKE3 output length cannot be zero");
+    }/* else if (hashByteLength > BLAKE3_OUT_LEN) {
         hasError = 1;
         zend_error(E_WARNING, "BLAKE3 output length is too long");
-    }
+    }*/
 
     if (keyLength > 0 && keyLength != BLAKE3_KEY_LEN) {
         hasError = 1;
-        zend_error(E_WARNING, "BLAKE3 key length MUST be 32 bytes");
+        zend_error(E_ERROR, "BLAKE3 key length MUST be 32 bytes");
     }
 
     if (hasError) {
@@ -82,7 +82,7 @@ PHP_FUNCTION(blake3)
     int result = blake3(hashOutput, hashByteLength, data, dataByteLength, key, keyLength);
 
     if (result != 0) {
-        zend_error(E_WARNING, "Error generating BLAKE3 hash");
+        zend_error(E_ERROR, "Error generating BLAKE3 hash");
         efree(hashOutput);
         RETURN_FALSE;
     }
