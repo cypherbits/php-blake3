@@ -3,9 +3,7 @@ PHP BLAKE3 Extension
 
 BLAKE3 is an improved and faster version of BLAKE2.
 
-This extension uses the official BLAKE3 implementation, thus is single-threaded, but still faster than SHA256 or SHA512 on my benchmark on latest PHP 7.4.
-
-Keys for HMAC is not working right now. And we need to change some things from Blake2 names to Blake3.
+This extension uses the official BLAKE3 C implementation, thus is single-threaded, but still faster than SHA256 or SHA512 on my benchmark on latest PHP 7.4.
 
 Installation
 ------------
