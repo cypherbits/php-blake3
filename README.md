@@ -27,6 +27,13 @@ You may need to restart your web server to load the extension.
 
 Usage
 ----
+
+**Global constants:**
+
+`BLAKE3_OUT_LEN: 32`
+
+**Functions:**
+
 ```php
 string blake3 ( string $str [, int $outputSize = 64, string $key, bool $rawOutput = false ] )
 ```

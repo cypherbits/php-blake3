@@ -18,13 +18,18 @@ zend_function_entry blake3_functions[] = {
     {NULL, NULL, NULL}
 };
 
+PHP_MINIT_FUNCTION(blake3){
+REGISTER_LONG_CONSTANT("BLAKE3_OUT_LEN",
+                           BLAKE3_OUT_LEN, CONST_CS | CONST_PERSISTENT);
+}
+
 zend_module_entry blake3_module_entry = {
 #if ZEND_MODULE_API_NO >= 20010901
     STANDARD_MODULE_HEADER,
 #endif
     PHP_BLAKE3_NAME,
     blake3_functions,
-    NULL,
+    PHP_MINIT(blake3),
     NULL,
     NULL,
     NULL,
@@ -54,7 +59,7 @@ PHP_FUNCTION(blake3)
     unsigned char *key;
     zend_bool rawOutput = 0;
 
-    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s|lsb", &data, &dataByteLength, &hashByteLength, &key, &keyLength, &rawOutput) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS(), "s|lsb", &data, &dataByteLength, &hashByteLength, &key, &keyLength, &rawOutput) == FAILURE) {
         return;
     }
 
