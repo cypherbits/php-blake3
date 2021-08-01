@@ -51,15 +51,7 @@ string blake3_file ( string $filename [, bool $rawOutput = false ] )
 
 * $filename: The filename of the file to hash
 * $rawOutput: If set to true, then the hash is returned in raw binary format
-
 * Return value: A hex string containing the BLAKE3 hash of the input file
-
-```php
-string b3sum ( string $filename [, bool $rawOutput = false ] )
-```
-
-is an alias to `blake3_file`
-
 
 Examples
 --------
@@ -81,14 +73,7 @@ echo blake3('Hello world', 32, 'cae8954e7b3415ea18303db548e15207');
 
 75672fafd13480d2325914f0665795eceecad4e668d9ea2a87c40e71232a7d3a
 
-
-```php
-echo b3sum('tests/sample.txt');
-```
-
-Outputs : 2c39776c5899720c2a9867d319c9991e197b57c0eb9d7c62f85375794c58b10f
-
-Benchmarks PHP 7.4
+Benchmarks
 --------
 ```php
 <?php
@@ -146,7 +131,7 @@ $end = microtime(true);
 printf("Function call %s took %.5f seconds\n", "blake3", $end - $start);
 ```
 
-**Results**
+**Results PHP 7.4**
 
 As fast as SHA1 but safer.
 
@@ -156,6 +141,29 @@ Function call sha1 took 0.00030 seconds
 Function call sha256 took 0.00070 seconds
 Function call sha512 took 0.00093 seconds
 Function call blake3 took 0.00030 seconds
+```
+
+**Results PHP 8.0**
+
+As fast as SHA1 but safer.
+
+```php
+Function call md5 took 0.00018 seconds
+Function call sha1 took 0.00028 seconds
+Function call sha256 took 0.00059 seconds
+Function call sha512 took 0.00076 seconds
+Function call blake3 took 0.00028 seconds
+```
+
+**Results PHP 8.0 for a random 4MB file**
+
+On file hashing Blake3 wins even over SHA1!
+
+```php
+Function call sha512 took 1.69619 seconds
+Function call sha256 took 2.51510 seconds
+Function call blake3 took 0.60553 seconds
+Function call sha1 took 1.03434 seconds
 ```
 
 More Info

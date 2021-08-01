@@ -11,10 +11,24 @@
 #define PHP_BLAKE3_NAME "BLAKE3"
 #define PHP_BLAKE3_VERSION "0.1.0"
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_void, 0, 0, 0)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_blake3, 0, 0, 1)
+	ZEND_ARG_INFO(0, str)
+	ZEND_ARG_INFO(0, outputSize)
+	ZEND_ARG_INFO(0, key)
+    ZEND_ARG_INFO(0, rawOutput)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO_EX(arginfo_blake3_file, 0, 0, 1)
+	ZEND_ARG_INFO(0, filename)
+    ZEND_ARG_INFO(0, rawOutput)
+ZEND_END_ARG_INFO()
+
 zend_function_entry blake3_functions[] = {
-    PHP_FE(blake3, NULL)
-    PHP_FE(blake3_file, NULL)
-    PHP_FALIAS(b3sum, blake3_file, NULL)
+    PHP_FE(blake3, arginfo_blake3)
+    PHP_FE(blake3_file, arginfo_blake3_file)
     {NULL, NULL, NULL}
 };
 
@@ -68,10 +82,7 @@ PHP_FUNCTION(blake3)
     if (hashByteLength < 1) {
         hasError = 1;
         zend_error(E_ERROR, "BLAKE3 output length cannot be zero");
-    }/* else if (hashByteLength > BLAKE3_OUT_LEN) {
-        hasError = 1;
-        zend_error(E_WARNING, "BLAKE3 output length is too long");
-    }*/
+    }
 
     if (keyLength > 0 && keyLength != BLAKE3_KEY_LEN) {
         hasError = 1;

@@ -19,10 +19,6 @@ int blake3( void *out, size_t outlen, const void *in, size_t inlen, const void *
 
     if( NULL == key && keylen > 0 ) return -1;
 
-    //if( !outlen || outlen > BLAKE3_OUT_LEN ) return -1;
-
-    //if( keylen > BLAKE3_KEY_LEN ) return -1;
-
     if( keylen == BLAKE3_KEY_LEN )
     {
         blake3_hasher_init_keyed(&hasher, key);
