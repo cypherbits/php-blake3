@@ -155,7 +155,7 @@ Function call sha512 took 0.00076 seconds
 Function call blake3 took 0.00028 seconds
 ```
 
-**Results PHP 8.0 for a random 4MB file**
+**Results PHP 8.0 for a random 4MB file (loop of 100 iterations)**
 
 On file hashing Blake3 wins even over SHA1!
 
