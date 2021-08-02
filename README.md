@@ -169,3 +169,10 @@ Function call sha1 took 1.03434 seconds
 More Info
 ---------
 https://github.com/BLAKE3-team/BLAKE3
+
+Donate
+------
+https://ko-fi.com/cypherbits
+
+Monero address:
+`4BCveGZaPM7FejGkhFyHgtjVXZw52RrYxKs7znZdmnWLfB3xDKAW6SkYZPpNhqBvJA8crE8Tug8y7hx8U9KAmq83PwLtVLe`
