@@ -32,3 +32,4 @@ run-tests.php
 *.lo
 .idea/
 configure.ac
+/compiled/*.so
