@@ -13,4 +13,3 @@ unlink($fn);
 ?>
 --EXPECT--
 bool(true)
-

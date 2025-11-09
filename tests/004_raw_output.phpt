@@ -1,15 +1,16 @@
 --TEST--
-blake3 raw output returns 32 bytes
+blake3 raw output returns 32 bytes and differs from hex output
 --SKIPIF--
 <?php if (!extension_loaded('blake3')) die('skip blake3 extension required'); ?>
 --FILE--
 <?php
-$raw = blake3('', 32, '', true); // empty key instead of null
+$raw = blake3('', 32, '', true); // empty key
+$hex = blake3('', 32); // default hex
 var_dump(strlen($raw));
-// raw binary may include non-printables; ensure differs from hex by checking all hex chars OR presence of any non-hex
-$allHex = ctype_xdigit(bin2hex($raw)); // always true but shows transform works
-var_dump($allHex);
+var_dump(strlen($hex));
+var_dump($raw === $hex); // raw vs hex must differ
 ?>
 --EXPECT--
 int(32)
-bool(true)
+int(64)
+bool(false)

@@ -4,7 +4,6 @@ blake3('Hello world', 32, key) returns expected hash
 <?php if (!extension_loaded('blake3')) die('skip blake3 extension required'); ?>
 --FILE--
 <?php
-// The key here is a 32-byte ASCII string, as per README example
 var_dump(blake3('Hello world', 32, 'cae8954e7b3415ea18303db548e15207'));
 ?>
 --EXPECT--

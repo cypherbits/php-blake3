@@ -10,4 +10,3 @@ var_dump(BLAKE3_OUT_LEN);
 --EXPECT--
 bool(true)
 int(32)
-
