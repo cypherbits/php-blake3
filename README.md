@@ -35,11 +35,11 @@ Usage
 **Functions:**
 
 ```php
-string blake3 ( string $str [, int $outputSize = 64, string $key, bool $rawOutput = false ] )
+string blake3 ( string $str [, int $outputSize = 32, string $key, bool $rawOutput = false ] )
 ```
 
 * $str: The string to hash
-* $outputSize: The length of the output hash (can be between 1 and 64)
+* $outputSize: The length of the output hash in bytes (must be >= 1). BLAKE3 supports extendable output so larger values are allowed; the default is 32 bytes.
 * $key: Turns the output into a keyed hash using the specified key. It MUST be of 32 bytes long.
 * $rawOutput: If set to true, then the hash is returned in raw binary format
 
