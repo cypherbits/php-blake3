@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        php: [ '8.3', '8.4' ]
+    name: PHP ${{ matrix.php }} build & test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: none
+          coverage: none
+      - name: Build extension
+        run: |
+          phpize
+          ./configure --enable-blake3
+          make -j$(nproc)
+          sudo make install
+      - name: php -v
+        run: php -v
+      - name: Official PHPT tests
+        env:
+          TEST_PHP_EXECUTABLE: php
+          TEST_PHP_ARGS: -d extension=blake3
+          NO_INTERACTION: 1
+        run: |
+          php run-tests.php -q --show-diff --show-slow --set-timeout 120 tests
+      - name: Custom runner smoke check
+        env:
+          CUSTOM_PHPT_RUNNER: 1
+        run: |
+          for f in tests/*.phpt; do php -d extension=blake3 .github/phpt_runner.php "$f" || exit 1; done
