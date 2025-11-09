@@ -1,0 +1,125 @@
+name: Release PHP BLAKE3 Extension
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build extension for PHP ${{ matrix.php }}
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        php: [ '8.3', '8.4']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify tag points to master
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin master
+          if git merge-base --is-ancestor origin/master "$GITHUB_SHA"; then
+            echo "Tag commit is on master (or descendant). Proceeding."
+          else
+            echo "This tag is not on master. Exiting." >&2
+            exit 1
+          fi
+
+      - name: Add ondrej/php PPA and install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y software-properties-common lsb-release ca-certificates curl git build-essential autoconf automake libtool pkg-config dpkg-dev
+          sudo add-apt-repository -y ppa:ondrej/php
+          sudo apt-get update
+          sudo apt-get install -y php${{ matrix.php }} php${{ matrix.php }}-dev
+
+      - name: Build extension (PHP ${{ matrix.php }})
+        env:
+          PHP_VER: ${{ matrix.php }}
+        run: |
+          set -euo pipefail
+          PHP_BIN="php${PHP_VER}"
+          PHPIZE_BIN="phpize${PHP_VER}"
+          PHP_CONFIG_BIN="php-config${PHP_VER}"
+
+          "${PHP_BIN}" -v || { echo "PHP ${PHP_VER} not available" >&2; exit 1; }
+          "${PHPIZE_BIN}" --version || { echo "phpize ${PHP_VER} not available" >&2; exit 1; }
+          "${PHP_CONFIG_BIN}" --version || { echo "php-config ${PHP_VER} not available" >&2; exit 1; }
+
+          # Prepare and build
+          "${PHPIZE_BIN}"
+          ./configure --enable-blake3 --with-php-config="$(command -v "${PHP_CONFIG_BIN}")"
+          make -j"$(nproc)"
+
+          # Save raw .so from build dir
+          if [ -f modules/blake3.so ]; then
+            DIST_ID=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+            DIST_CODENAME=$(lsb_release -cs)
+            cp modules/blake3.so blake3-${DIST_ID}-${DIST_CODENAME}-php${PHP_VER}-amd64.so
+          else
+            echo "Error: modules/blake3.so not found" >&2; exit 1
+          fi
+
+          # Install to system (so php-config ext dir exists even if not)
+          sudo make install
+          EXT_DIR="$(${PHP_CONFIG_BIN} --extension-dir)"
+          echo "Extension dir: $EXT_DIR"
+
+          # Prepare Debian package structure
+          TAG_NAME="${GITHUB_REF_NAME}"
+          PKG_VERSION="${TAG_NAME#v}"
+          STAGING="pkgroot"
+          mkdir -p "${STAGING}${EXT_DIR}"
+          cp modules/blake3.so "${STAGING}${EXT_DIR}/blake3.so"
+
+          mkdir -p "${STAGING}/DEBIAN"
+          printf "Package: php-blake3\nVersion: %s-php%s\nSection: php\nPriority: optional\nArchitecture: amd64\nMaintainer: php-blake3 maintainers\nDescription: BLAKE3 hashing extension for PHP (built for PHP %s)\n" "${PKG_VERSION}" "${PHP_VER}" "${PHP_VER}" > "${STAGING}/DEBIAN/control"
+
+          # Build .deb
+          DIST_ID=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+          DIST_CODENAME=$(lsb_release -cs)
+          DEB_NAME="php-blake3_${PKG_VERSION}_${DIST_ID}-${DIST_CODENAME}_php${PHP_VER}_amd64.deb"
+          dpkg-deb --build --root-owner-group "${STAGING}" "${DEB_NAME}"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: php-blake3-php${{ matrix.php }}
+          path: |
+            blake3-*-php${{ matrix.php }}-amd64.so
+            php-blake3_*_php${{ matrix.php }}_amd64.deb
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-24.04
+    needs: build
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List downloaded artifacts
+        run: ls -R artifacts | sed -n '1,200p'
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/**/blake3-*-php*-amd64.so
+            artifacts/**/php-blake3_*_php*_amd64.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
