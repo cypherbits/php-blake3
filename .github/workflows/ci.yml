@@ -39,3 +39,4 @@ jobs:
           CUSTOM_PHPT_RUNNER: 1
         run: |
           for f in tests/*.phpt; do php -d extension=blake3 .github/phpt_runner.php "$f" || exit 1; done
+

@@ -16,11 +16,13 @@ foreach (preg_split('/\r?\n/', $contents) as $line) {
         $sections[$current] .= $line . "\n";
     }
 }
+$php = escapeshellcmd(PHP_BINARY);
+$extArg = getenv('PHPT_ADD_EXTENSION') ? ' -d extension=blake3 ' : ' ';
 if (isset($sections['SKIPIF'])) {
     $code = $sections['SKIPIF'];
     $tmpSkip = tempnam(sys_get_temp_dir(), 'phpt_skip_') . '.php';
     file_put_contents($tmpSkip, $code);
-    $cmd = escapeshellcmd(PHP_BINARY) . ' -d extension=blake3 ' . escapeshellarg($tmpSkip);
+    $cmd = $php . $extArg . escapeshellarg($tmpSkip);
     $out = shell_exec($cmd);
     unlink($tmpSkip);
     if ($out !== null && preg_match('/^skip/i', trim($out))) {
@@ -35,7 +37,7 @@ if (!isset($sections['FILE']) || !isset($sections['EXPECT'])) {
 $code = $sections['FILE'];
 $tmpFile = tempnam(sys_get_temp_dir(), 'phpt_') . '.php';
 file_put_contents($tmpFile, $code);
-$cmd = escapeshellcmd(PHP_BINARY) . ' -d extension=blake3 ' . escapeshellarg($tmpFile);
+$cmd = $php . $extArg . escapeshellarg($tmpFile);
 $actual = shell_exec($cmd);
 unlink($tmpFile);
 $expected = $sections['EXPECT'];
@@ -51,4 +53,3 @@ if ($actualNorm === $expectedNorm) {
     echo "Got:\n$actualNorm\n";
     exit(1);
 }
-
