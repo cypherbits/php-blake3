@@ -3,10 +3,10 @@ PHP BLAKE3 Extension
 
 BLAKE3 is an improved and faster version of BLAKE2.
 
-This extension uses the official BLAKE3 C implementation, thus is single-threaded, but still faster than SHA256 or SHA512 on my benchmark on PHP 7.4.
+This extension uses the official BLAKE3 C implementation, thus is single-threaded, but still faster than SHA256 or SHA512 on benchmark (PHP 7.4).
 
-Installation
-------------
+Installation (manual)
+---------------------
 Clone the repository and compile it:
 ```sh
 $ git clone https://github.com/cypherbits/php-blake3.git
@@ -176,3 +176,29 @@ https://ko-fi.com/cypherbits
 
 Monero address:
 `4BCveGZaPM7FejGkhFyHgtjVXZw52RrYxKs7znZdmnWLfB3xDKAW6SkYZPpNhqBvJA8crE8Tug8y7hx8U9KAmq83PwLtVLe`
+
+Packagist & PIE Installation
+----------------------------
+
+This extension ships with a `composer.json` compatible with PIE. Once the repository is published on Packagist (for example as `cypherbits/php-blake3` and tagged, e.g. `v0.1.0`), you can install it with PIE:
+
+```sh
+pie install cypherbits/php-blake3 --enable-blake3
+```
+
+PIE will perform the usual non-Windows extension build steps:
+
+1. `phpize`
+2. `./configure --enable-blake3`
+3. `make`
+4. `make install`
+5. Enable the extension via an INI file (for example `extension=blake3`).
+
+You can still install it manually without PIE using the steps in the "Installation (manual)" section above.
+
+Publishing to Packagist
+-----------------------
+1. Create a tag, for example: `git tag v0.1.0 && git push --tags`.
+2. Go to https://packagist.org/packages/submit and submit `https://github.com/cypherbits/php-blake3`.
+3. Optionally configure auto-updates for GitHub so new tags are picked up automatically.
+4. Test in a clean project using PIE: `pie install cypherbits/php-blake3 --enable-blake3`.

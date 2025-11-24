@@ -1,0 +1,34 @@
+{
+  "name": "cypherbits/php-blake3",
+  "description": "BLAKE3 hashing algorithm PHP extension (native C, SIMD) for fast cryptographic hashing.",
+  "keywords": ["blake3", "hash", "crypto", "php-extension", "simd"],
+  "homepage": "https://github.com/cypherbits/php-blake3",
+  "license": "MIT",
+  "type": "php-ext",
+  "support": {
+    "issues": "https://github.com/cypherbits/php-blake3/issues",
+    "source": "https://github.com/cypherbits/php-blake3"
+  },
+  "funding": [
+    {"type": "ko-fi", "url": "https://ko-fi.com/cypherbits"}
+  ],
+  "authors": [
+    {
+      "name": "cypherbits",
+      "role": "Maintainer"
+    }
+  ],
+  "require": {
+    "php": ">=8.3"
+  },
+  "php-ext": {
+    "extension-name": "blake3",
+    "configure-options": [
+      {
+        "name": "enable-blake3",
+        "description": "Enable the BLAKE3 extension (--enable-blake3)",
+        "needs-value": false
+      }
+    ]
+  }
+}
