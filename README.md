@@ -172,10 +172,10 @@ https://github.com/BLAKE3-team/BLAKE3
 
 Donate
 ------
-https://ko-fi.com/cypherbits
 
-Monero address:
-`4BCveGZaPM7FejGkhFyHgtjVXZw52RrYxKs7znZdmnWLfB3xDKAW6SkYZPpNhqBvJA8crE8Tug8y7hx8U9KAmq83PwLtVLe`
+Bitcoin: `bc1q9s3rzpva228m8lux2mkmter67u9gm5j0jxjezj`
+
+Monero: `4BCveGZaPM7FejGkhFyHgtjVXZw52RrYxKs7znZdmnWLfB3xDKAW6SkYZPpNhqBvJA8crE8Tug8y7hx8U9KAmq83PwLtVLe`
 
 Packagist & PIE Installation
 ----------------------------
