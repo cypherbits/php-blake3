@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<package version="2.0" xmlns="http://pear.php.net/dtd/package-2.0"
+    xmlns:tasks="http://pear.php.net/dtd/tasks-1.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd
+                        http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+    <name>blake3</name>
+    <uri>https://github.com/cypherbits/php-blake3/archive/refs/heads/master.zip</uri>
+
+    <summary>PHP extension</summary>
+    <description>BLAKE3 is an improved and faster version of BLAKE2.
+
+This extension uses the official BLAKE3 C implementation, thus is single-threaded, but still faster than SHA256 or SHA512 on benchmark (PHP 7.4).</description>
+    <lead>
+        <name>cypherbits</name>
+        <user>cypherbits</user>
+        <email>cypherbits</email>
+        <active>yes</active>
+    </lead>
+    <date>2025-11-24</date>
+    <version>
+        <release>202511241</release>
+        <api>202511241</api>
+    </version>
+    <stability>
+        <release>stable</release>
+        <api>stable</api>
+    </stability>
+    <license filesource="LICENSE">PHP</license>
+    <notes>-</notes>
+    <contents>
+        <dir name="/">
+            <file role="doc" name="README.md" />
+            <file role="doc" name="LICENSE" />
+            <file role="src" name="blake3.c" />
+            <file role="src" name="blake3.h" />
+            <file role="src" name="blake3_avx2.c" />
+            <file role="src" name="blake3_avx2_x86-64_unix.S" />
+            <file role="src" name="blake3_avx2_x86-64_windows_gnu.S" />
+            <file role="src" name="blake3_avx2_x86-64_windows_msvc.asm" />
+            <file role="src" name="blake3_avx512.c" />
+            <file role="src" name="blake3_avx512_x86-64_unix.S" />
+            <file role="src" name="blake3_avx512_x86-64_windows_gnu.S" />
+            <file role="src" name="blake3_avx512_x86-64_windows_msvc.asm" />
+            <file role="src" name="blake3_dispatch.c" />
+            <file role="src" name="blake3_impl.h" />
+            <file role="src" name="blake3_portable.c" />
+            <file role="src" name="blake3_sse2.c" />
+            <file role="src" name="blake3_sse2_x86-64_unix.S" />
+            <file role="src" name="blake3_sse2_x86-64_windows_gnu.S" />
+            <file role="src" name="blake3_sse2_x86-64_windows_msvc.asm" />
+            <file role="src" name="blake3_sse41.c" />
+            <file role="src" name="blake3_sse41_x86-64_unix.S" />
+            <file role="src" name="blake3_sse41_x86-64_windows_gnu.S" />
+            <file role="src" name="blake3_sse41_x86-64_windows_msvc.asm" />
+            <file role="src" name="config.m4" />
+            <file role="src" name="config.w32" />
+            <file role="src" name="php_blake3.c" />
+            <file role="src" name="php_blake3.h" />
+        </dir>
+    </contents>
+    <dependencies>
+        <required>
+            <php>
+                <min>7.0.0</min>
+            </php>
+            <pearinstaller>
+                <min>1.4.0</min>
+            </pearinstaller>
+        </required>
+    </dependencies>
+    <providesextension>blake3</providesextension>
+    <extsrcrelease>
+        <configureoption name="enable-blake3" prompt="enable blake3" default="yes" />
+    </extsrcrelease>
+</package>
