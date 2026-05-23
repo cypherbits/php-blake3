@@ -4,6 +4,23 @@
 
 #include "blake3_impl.h"
 
+/* Force disable x86-64 assembly paths if not building for x86-64 */
+#if !defined(__x86_64__) && !defined(_M_X64)
+  #ifndef BLAKE3_NO_SSE2
+    #define BLAKE3_NO_SSE2 1
+  #endif
+  #ifndef BLAKE3_NO_SSE41
+    #define BLAKE3_NO_SSE41 1
+  #endif
+  #ifndef BLAKE3_NO_AVX2
+    #define BLAKE3_NO_AVX2 1
+  #endif
+  #ifndef BLAKE3_NO_AVX512
+    #define BLAKE3_NO_AVX512 1
+  #endif
+  #undef IS_X86
+#endif
+
 #if defined(IS_X86)
 #if defined(_MSC_VER)
 #include <intrin.h>
