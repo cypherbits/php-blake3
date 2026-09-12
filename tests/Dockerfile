@@ -3,12 +3,17 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install PHP 8.3, build tooling and dev headers to compile the extension and run PHPT
+# Install PHP 8.5 (from ondrej/php PPA, not in stock Ubuntu 24.04),
+# plus build tooling and dev headers to compile the extension and run PHPT
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
        ca-certificates \
-       php8.3 php8.3-cli php8.3-dev \
+       software-properties-common \
        make gcc build-essential \
+    && add-apt-repository -y ppa:ondrej/php \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+       php8.5 php8.5-cli php8.5-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the full repository into the container build context
@@ -22,15 +27,16 @@ RUN phpize \
     && make install
 
 # Enable the extension once (avoid double load when using -d extension also)
-RUN echo "extension=blake3.so" > /etc/php/8.3/cli/conf.d/50-blake3.ini \
+RUN echo "extension=blake3.so" > /etc/php/8.5/cli/conf.d/50-blake3.ini \
     && php -m | grep -i blake3 || (echo "blake3 not loaded" && exit 1)
 
 # Entry script: prefer system run-tests.php, fallback to custom runner
 RUN printf '%s\n' \
   '#!/usr/bin/env bash' \
   'set -euo pipefail' \
-  'if [ -f /usr/lib/php/build/run-tests.php ]; then' \
-  '  exec php /usr/lib/php/build/run-tests.php -q --show-diff --show-slow --set-timeout 120 tests' \
+  'RUN_TESTS="$(find /usr/lib/php -name run-tests.php | head -n1)"' \
+  'if [ -n "${RUN_TESTS}" ]; then' \
+  '  exec php "${RUN_TESTS}" -q --show-diff --show-slow 1000 --set-timeout 120 tests' \
   'else' \
   '  echo "run-tests.php not found, using custom runner"' \
   '  for f in tests/*.phpt; do PHPT_ADD_EXTENSION= php .github/phpt_runner.php "$f" || exit 1; done' \

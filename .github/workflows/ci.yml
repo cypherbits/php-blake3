@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        php: [ '8.3', '8.4' ]
+        php: [ '8.3', '8.4', '8.5' ]
     name: PHP ${{ matrix.php }} build & test
     steps:
       - uses: actions/checkout@v4
@@ -29,11 +29,13 @@ jobs:
         run: php -v
       - name: Official PHPT tests
         env:
-          TEST_PHP_EXECUTABLE: php
           TEST_PHP_ARGS: -d extension=blake3
           NO_INTERACTION: 1
         run: |
-          php run-tests.php -q --show-diff --show-slow --set-timeout 120 tests
+          export TEST_PHP_EXECUTABLE="$(command -v php)"
+          RUN_TESTS="$(find /usr/lib/php -name run-tests.php | head -n1)"
+          echo "Using runner: ${RUN_TESTS}"
+          php "${RUN_TESTS}" -q --show-diff --show-slow 1000 --set-timeout 120 tests
       - name: Custom runner smoke check
         env:
           CUSTOM_PHPT_RUNNER: 1
