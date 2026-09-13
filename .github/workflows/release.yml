@@ -10,13 +10,21 @@ permissions:
 
 jobs:
   build:
-    name: Build extension for PHP ${{ matrix.php }} (${{ matrix.arch }})
-    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    name: Build extension for PHP ${{ matrix.php }} (${{ matrix.distro }}-${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        php: [ '8.3', '8.4', '8.5']
-        arch: [ 'amd64', 'arm64' ]
+        include:
+          - { php: '8.3', arch: amd64, distro: '24.04', os: ubuntu-24.04 }
+          - { php: '8.3', arch: arm64, distro: '24.04', os: ubuntu-24.04-arm }
+          - { php: '8.4', arch: amd64, distro: '24.04', os: ubuntu-24.04 }
+          - { php: '8.4', arch: arm64, distro: '24.04', os: ubuntu-24.04-arm }
+          - { php: '8.5', arch: amd64, distro: '24.04', os: ubuntu-24.04 }
+          - { php: '8.5', arch: arm64, distro: '24.04', os: ubuntu-24.04-arm }
+          # Stock Ubuntu 26.04 repos only ship PHP 8.5
+          - { php: '8.5', arch: amd64, distro: '26.04', os: ubuntu-26.04 }
+          - { php: '8.5', arch: arm64, distro: '26.04', os: ubuntu-26.04-arm }
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,7 +46,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y software-properties-common lsb-release ca-certificates curl git build-essential autoconf automake libtool pkg-config dpkg-dev
-          sudo add-apt-repository -y ppa:ondrej/php
+          # Stock Ubuntu 26.04 already ships PHP 8.5; the PPA is only needed on 24.04
+          if [ "${{ matrix.distro }}" = "24.04" ]; then sudo add-apt-repository -y ppa:ondrej/php; fi
           sudo apt-get update
           sudo apt-get install -y php${{ matrix.php }} php${{ matrix.php }}-dev
 
@@ -46,6 +55,7 @@ jobs:
         env:
           PHP_VER: ${{ matrix.php }}
           ARCH: ${{ matrix.arch }}
+          DISTRO: ${{ matrix.distro }}
         run: |
           set -euo pipefail
           PHP_BIN="php${PHP_VER}"
@@ -94,7 +104,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: php-blake3-php${{ matrix.php }}-${{ matrix.arch }}
+          name: php-blake3-php${{ matrix.php }}-${{ matrix.distro }}-${{ matrix.arch }}
           path: |
             blake3-*-php${{ matrix.php }}-${{ matrix.arch }}.so
             php-blake3_*_php${{ matrix.php }}_${{ matrix.arch }}.deb

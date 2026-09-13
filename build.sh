@@ -2,17 +2,21 @@
 set -euo pipefail
 
 PHP_VERSION="${PHP_VERSION:-8.5}"
+DISTRO="${DISTRO:-24.04}"
 ARCH="${ARCH:-$(docker version --format '{{.Client.Arch}}')}"
-IMAGE_TAG="blake3build:php${PHP_VERSION}-${ARCH}"
-CONTAINER_NAME="blake3build_container_php${PHP_VERSION}_${ARCH}"
-ARTIFACT="blake3-php${PHP_VERSION}-${ARCH}.so"
+IMAGE_TAG="blake3build:php${PHP_VERSION}-${DISTRO}-${ARCH}"
+CONTAINER_NAME="blake3build_container_php${PHP_VERSION}-${DISTRO}-${ARCH}"
+ARTIFACT="blake3-php${PHP_VERSION}-${DISTRO}-${ARCH}.so"
 
 BUILD_ARGS=()
+if [ "${DISTRO}" != "24.04" ]; then
+  BUILD_ARGS+=(--build-arg BASE_IMAGE="ubuntu:${DISTRO}")
+fi
 if [ "${ARCH}" != "amd64" ]; then
-  BUILD_ARGS=(--platform "linux/${ARCH}")
+  BUILD_ARGS+=(--platform "linux/${ARCH}")
 fi
 
-docker build --tag "${IMAGE_TAG}" "${BUILD_ARGS[@]}" .
+docker build "${BUILD_ARGS[@]}" --tag "${IMAGE_TAG}" .
 docker rm -f "${CONTAINER_NAME}" 2>/dev/null || true
 docker create --name "${CONTAINER_NAME}" "${IMAGE_TAG}"
 #/making/modules/blake3.so
