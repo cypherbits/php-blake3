@@ -1,9 +1,12 @@
 name: Release PHP BLAKE3 Extension
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version as year.month.day-subversion (e.g. 2026.9.13-1)'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -12,6 +15,8 @@ jobs:
   build:
     name: Build extension for PHP ${{ matrix.php }} (${{ matrix.distro }}-${{ matrix.arch }})
     runs-on: ${{ matrix.os }}
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
     strategy:
       fail-fast: false
       matrix:
@@ -31,14 +36,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify tag points to master
+      - name: Validate release version
+        id: version
+        env:
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          # Accept the version with or without the leading "v"
+          VERSION="${VERSION_INPUT#v}"
+          if ! [[ "${VERSION}" =~ ^[0-9]{4}\.[0-9]{1,2}\.[0-9]{1,2}-[0-9]+$ ]]; then
+            echo "Invalid version '${VERSION}'. Expected year.month.day-subversion, e.g. 2026.9.13-1" >&2
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify commit is on master
         run: |
           set -euo pipefail
           git fetch --no-tags --depth=1 origin master
           if git merge-base --is-ancestor origin/master "$GITHUB_SHA"; then
-            echo "Tag commit is on master (or descendant). Proceeding."
+            echo "Commit is on master (or descendant). Proceeding."
           else
-            echo "This tag is not on master. Exiting." >&2
+            echo "This commit is not on master. Run the workflow from master." >&2
             exit 1
           fi
 
@@ -86,8 +106,8 @@ jobs:
           echo "Extension dir: $EXT_DIR"
 
           # Prepare Debian package structure
-          TAG_NAME="${GITHUB_REF_NAME}"
-          PKG_VERSION="${TAG_NAME#v}"
+          TAG_NAME="${{ steps.version.outputs.tag }}"
+          PKG_VERSION="${{ steps.version.outputs.version }}"
           STAGING="pkgroot"
           mkdir -p "${STAGING}${EXT_DIR}"
           cp modules/blake3.so "${STAGING}${EXT_DIR}/blake3.so"
@@ -126,8 +146,8 @@ jobs:
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: ${{ needs.build.outputs.tag }}
+          name: ${{ needs.build.outputs.tag }}
           draft: false
           prerelease: false
           files: |
