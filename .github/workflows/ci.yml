@@ -35,10 +35,21 @@ jobs:
           export TEST_PHP_EXECUTABLE="$(command -v php)"
           RUN_TESTS="$(find /usr/lib/php -name run-tests.php | head -n1)"
           echo "Using runner: ${RUN_TESTS}"
-          php "${RUN_TESTS}" -q --show-diff --show-slow 1000 --set-timeout 120 tests
+          if [ -z "${RUN_TESTS}" ]; then
+            echo "run-tests.php not found under /usr/lib/php" >&2
+            exit 1
+          fi
+          # run-tests.php writes run-test-info.php next to itself, but the system
+          # build dir is not writable by the runner user. Copy it to a writable
+          # temp dir so it can generate its helper files.
+          cp "${RUN_TESTS}" "${RUNNER_TEMP:-/tmp}/run-tests.php"
+          php "${RUNNER_TEMP:-/tmp}/run-tests.php" -q --show-diff --show-slow 1000 --set-timeout 120 tests
       - name: Custom runner smoke check
         env:
           CUSTOM_PHPT_RUNNER: 1
+          # Make phpt_runner.php load the extension in the child PHP process,
+          # otherwise every test is reported as SKIPPED.
+          PHPT_ADD_EXTENSION: 1
         run: |
           for f in tests/*.phpt; do php -d extension=blake3 .github/phpt_runner.php "$f" || exit 1; done
 

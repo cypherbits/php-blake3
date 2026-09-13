@@ -39,7 +39,7 @@ RUN printf '%s\n' \
   '  exec php "${RUN_TESTS}" -q --show-diff --show-slow 1000 --set-timeout 120 tests' \
   'else' \
   '  echo "run-tests.php not found, using custom runner"' \
-  '  for f in tests/*.phpt; do PHPT_ADD_EXTENSION= php .github/phpt_runner.php "$f" || exit 1; done' \
+  '  for f in tests/*.phpt; do PHPT_ADD_EXTENSION=1 php .github/phpt_runner.php "$f" || exit 1; done' \
   'fi' \
   > /usr/local/bin/run-phpt && chmod +x /usr/local/bin/run-phpt
 
