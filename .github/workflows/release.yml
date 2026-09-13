@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version as year.month.day-subversion (e.g. 2026.9.13-1)'
+        description: 'Version as year.month.day.subversion (e.g. 2026.9.13.1)'
         required: true
         type: string
 
@@ -44,8 +44,10 @@ jobs:
           set -euo pipefail
           # Accept the version with or without the leading "v"
           VERSION="${VERSION_INPUT#v}"
-          if ! [[ "${VERSION}" =~ ^[0-9]{4}\.[0-9]{1,2}\.[0-9]{1,2}-[0-9]+$ ]]; then
-            echo "Invalid version '${VERSION}'. Expected year.month.day-subversion, e.g. 2026.9.13-1" >&2
+          # Must be a Composer-valid version: four dot-separated numeric parts,
+          # e.g. 2026.9.13.1 (a dash suffix like 2026.9.13-1 is NOT valid).
+          if ! [[ "${VERSION}" =~ ^[0-9]{4}\.[0-9]{1,2}\.[0-9]{1,2}\.[0-9]+$ ]]; then
+            echo "Invalid version '${VERSION}'. Expected year.month.day.subversion, e.g. 2026.9.13.1" >&2
             exit 1
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
